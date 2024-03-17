@@ -22,6 +22,20 @@ export default class View {
     })
   }
 
+  render (game, stats) {
+    const { playerWithStats, ties } = stats
+    const { moves, currentPlayer, status: { isComplete, winner } } = game;
+    this.#closeAll()
+    this.#clearMoves()
+    this.#updateScoreboard(playerWithStats[0].wins, playerWithStats[1].wins)
+    this.#initialiseMoves(moves)
+    if (isComplete) {
+      this.#openModal(winner ? `${winner.name} wins!` : "It's a tie!")
+      return
+    }
+    this.#setTurnIndicator(currentPlayer)
+  }
+
   bindGameResetEvent (handler) {
     this.$.resetBtn.addEventListener('click', handler)
     this.$.modalBtn.addEventListener('click', handler)
@@ -40,20 +54,20 @@ export default class View {
    * DOM Helper Methods
    ***/
 
-  updateScoreboard (p1Wins, p2Wins, ties) {
+  #updateScoreboard (p1Wins, p2Wins, ties) {
     this.$.p1Wins.innerText = `${p1Wins} wins`
     this.$.p2Wins.innerText = `${p2Wins} wins`
     this.$.ties.innerText = `${ties} ties`
   }
-  openModal (message) {
+  #openModal (message) {
     this.$.modal.classList.remove('hidden')
     this.$.modalText.innerText = message
   }
-  closeAll () {
+  #closeAll () {
     this.#closeModal()
     this.#closeMenu()
   }
-  clearMoves () {
+  #clearMoves () {
     this.$$.squares.forEach((square) => {
       square.replaceChildren()
     })
@@ -78,7 +92,7 @@ export default class View {
     icon.classList.toggle("fa-chevron-down")
     icon.classList.toggle("fa-chevron-up")
   }
-  handlePlayerMove (squareEl, player) {
+  #handlePlayerMove (squareEl, player) {
     const icon = document.createElement("i")
     icon.classList.add(
       'fa-solid',
@@ -86,8 +100,17 @@ export default class View {
       player.colorClass)
     squareEl.replaceChildren(icon)
   }
+
+  #initialiseMoves (moves) {
+    this.$$.squares.forEach((square) => {
+      const existingMove = moves.find(move => move.squareId === +square.id)
+      if (existingMove) {
+        this.#handlePlayerMove(square, existingMove.player)
+      }
+    })
+  }
   // player 1 or 2
-  setTurnIndicator (player) {
+  #setTurnIndicator (player) {
     const icon = document.createElement('i')
     const label = document.createElement('p')
 
