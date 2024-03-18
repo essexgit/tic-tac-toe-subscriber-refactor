@@ -1,7 +1,7 @@
 export default class View {
   $ = {}
   $$ = {}
-  constructor() {
+  constructor () {
     this.$.menu = this.#qs('[data-id="menu"]')
     this.$.menuBtn = this.#qs('[data-id="menu-btn"]')
     this.$.menuItems = this.#qs('[data-id="menu-items"]')
@@ -23,7 +23,7 @@ export default class View {
     })
   }
 
-  render (game, stats) {
+  render(game, stats) {
     const { playerWithStats, ties } = stats
     const { moves, currentPlayer, status: { isComplete, winner } } = game;
     this.#closeAll()
@@ -37,16 +37,16 @@ export default class View {
     this.#setTurnIndicator(currentPlayer)
   }
 
-  bindGameResetEvent (handler) {
+  bindGameResetEvent(handler) {
     this.$.resetBtn.addEventListener('click', handler)
     this.$.modalBtn.addEventListener('click', handler)
   }
 
-  bindNewRoundEvent (handler) {
+  bindNewRoundEvent(handler) {
     this.$.newRoundBtn.addEventListener('click', handler)
 
   }
-  bindPlayerMoveEvent (handler) {
+  bindPlayerMoveEvent(handler) {
     this.#delegate(this.$.grid, '[data-id="square"]', 'click', handler)
     // this.$$.squares.forEach((square) => {
     //   square.addEventListener('click', () => handler(square))
@@ -56,28 +56,28 @@ export default class View {
    * DOM Helper Methods
    ***/
 
-  #updateScoreboard (p1Wins, p2Wins, ties) {
+  #updateScoreboard(p1Wins, p2Wins, ties) {
     this.$.p1Wins.innerText = `${p1Wins} wins`
     this.$.p2Wins.innerText = `${p2Wins} wins`
     this.$.ties.innerText = `${ties} ties`
   }
-  #openModal (message) {
+  #openModal(message) {
     this.$.modal.classList.remove('hidden')
     this.$.modalText.innerText = message
   }
-  #closeAll () {
+  #closeAll() {
     this.#closeModal()
     this.#closeMenu()
   }
-  #clearMoves () {
+  #clearMoves() {
     this.$$.squares.forEach((square) => {
       square.replaceChildren()
     })
   }
-  #closeModal () {
+  #closeModal() {
     this.$.modal.classList.add('hidden')
   }
-  #closeMenu () {
+  #closeMenu() {
     this.$.menuItems.classList.add('hidden')
     this.$.menuBtn.classList.remove('border')
     const icon = this.$.menuBtn.querySelector('i')
@@ -85,7 +85,7 @@ export default class View {
     icon.classList.add("fa-chevron-down")
     icon.classList.remove("fa-chevron-up")
   }
-  #toggleMenu () {
+  #toggleMenu() {
     this.$.menuItems.classList.toggle('hidden')
     this.$.menuBtn.classList.toggle('border')
 
@@ -94,7 +94,7 @@ export default class View {
     icon.classList.toggle("fa-chevron-down")
     icon.classList.toggle("fa-chevron-up")
   }
-  #handlePlayerMove (squareEl, player) {
+  #handlePlayerMove(squareEl, player) {
     const icon = document.createElement("i")
     icon.classList.add(
       'fa-solid',
@@ -103,7 +103,7 @@ export default class View {
     squareEl.replaceChildren(icon)
   }
 
-  #initialiseMoves (moves) {
+  #initialiseMoves(moves) {
     this.$$.squares.forEach((square) => {
       const existingMove = moves.find(move => move.squareId === +square.id)
       if (existingMove) {
@@ -112,7 +112,7 @@ export default class View {
     })
   }
   // player 1 or 2
-  #setTurnIndicator (player) {
+  #setTurnIndicator(player) {
     const icon = document.createElement('i')
     const label = document.createElement('p')
 
@@ -124,19 +124,19 @@ export default class View {
     this.$.turn.replaceChildren(icon, label)
   }
 
-  #qs (selector, parent) {
+  #qs(selector, parent) {
     const el = parent
       ? parent.querySelector(selector)
       : document.querySelector(selector)
     if (!el) throw new Error('Could not find elements')
     return el
   }
-  #qsAll (selector) {
+  #qsAll(selector) {
     const elList = document.querySelectorAll(selector)
     if (!elList) throw new Error('Could not find elements')
     return elList
   }
-  #delegate (el, selector, eventKey, handler) {
+  #delegate(el, selector, eventKey, handler) {
     el.addEventListener(eventKey, (event) => {
       if (event.target.matches(selector)) {
         handler(event.target)

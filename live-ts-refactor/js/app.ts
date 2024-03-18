@@ -17,7 +17,7 @@ const players = [
 ];
 // window.addEventListener('load', App.init)
 
-function init () {
+function init() {
   const view = new View()
   const store = new Store('live-t3-storage-key', players)
   store.addEventListener('stateChange', () => {
@@ -39,7 +39,7 @@ function init () {
 
   })
   view.bindPlayerMoveEvent((square) => {
-    console.log(square)
+    // console.log(square)
     const existingMove = store.game.moves.find((move) => move.squareId === +square.id)
     if (existingMove) {
       return
