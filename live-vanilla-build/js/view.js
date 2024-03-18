@@ -14,6 +14,7 @@ export default class View {
     this.$.p1Wins = this.#qs('[data-id="p1-wins"]')
     this.$.p2Wins = this.#qs('[data-id="p2-wins"]')
     this.$.ties = this.#qs('[data-id="ties"]')
+    this.$.grid = this.#qs('[data-id="grid"]')
 
     this.$$.squares = this.#qsAll('[data-id="square"]')
     //UI - only event listeners
@@ -27,7 +28,7 @@ export default class View {
     const { moves, currentPlayer, status: { isComplete, winner } } = game;
     this.#closeAll()
     this.#clearMoves()
-    this.#updateScoreboard(playerWithStats[0].wins, playerWithStats[1].wins)
+    this.#updateScoreboard(playerWithStats[0].wins, playerWithStats[1].wins, ties)
     this.#initialiseMoves(moves)
     if (isComplete) {
       this.#openModal(winner ? `${winner.name} wins!` : "It's a tie!")
@@ -46,9 +47,10 @@ export default class View {
 
   }
   bindPlayerMoveEvent (handler) {
-    this.$$.squares.forEach((square) => {
-      square.addEventListener('click', () => handler(square))
-    })
+    this.#delegate(this.$.grid, '[data-id="square"]', 'click', handler)
+    // this.$$.squares.forEach((square) => {
+    //   square.addEventListener('click', () => handler(square))
+    // })
   }
   /****
    * DOM Helper Methods
@@ -133,5 +135,12 @@ export default class View {
     const elList = document.querySelectorAll(selector)
     if (!elList) throw new Error('Could not find elements')
     return elList
+  }
+  #delegate (el, selector, eventKey, handler) {
+    el.addEventListener(eventKey, (event) => {
+      if (event.target.matches(selector)) {
+        handler(event.target)
+      }
+    })
   }
 }
